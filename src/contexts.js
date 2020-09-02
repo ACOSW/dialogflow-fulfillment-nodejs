@@ -263,8 +263,8 @@ class Context {
         _.isEqual(ctx, this.inputContexts[ctx.name])) {
         continue;
       }
-      let v2Context = {name: ctx.rawName };
-      console.log(v2Context);
+      let v2Context = { name: ctx.rawName };
+      console.log(ctx);
       if (ctx.lifespan !== undefined) {
         v2Context['lifespanCount'] = ctx.lifespan;
       }
