@@ -15,6 +15,7 @@
  */
 
 const _ = require('lodash');
+const { split } = require('lodash');
 const DELETED_LIFESPAN_COUNT = 0; // Lifespan of a deleted context
 
 /**
@@ -197,13 +198,29 @@ class Context {
    */
   _processV2InputContexts(v2InputContexts) {
     let contexts = {};
-    for (let index = 0; index<v2InputContexts.length; index++) {
+    for (let index = 0; index < v2InputContexts.length; index++) {
       let context = v2InputContexts[index];
-      const name = context['name'].split('/')[6];
+      const splitted = context["name"]
+        .replace("agent/", "")
+        .match(/([^\/]+\/[^\/]+)/g)
+        .reduce((map, entry) => {
+          const match = entry.split("/");
+          map.set(match[0], match[1]);
+          return map;
+        }, new Map());
+
+      if (!splitted.has('contexts')) {
+        console.error(`Unable to arse context name from ${context['name']}`);
+        continue;
+      }
+
+      const name = splited.get('contexts');
       contexts[name] = {
         name: name,
-        lifespan: context['lifespanCount'],
-        parameters: context['parameters']};
+        rawName: context['name'],
+        lifespan: context["lifespanCount"],
+        parameters: context["parameters"],
+      };
     }
     return contexts;
   }
@@ -246,7 +263,8 @@ class Context {
         _.isEqual(ctx, this.inputContexts[ctx.name])) {
         continue;
       }
-      let v2Context = {name: `${this.session}/contexts/${ctx.name}`};
+      let v2Context = {name: ctx.rawName };
+      console.log(v2Context);
       if (ctx.lifespan !== undefined) {
         v2Context['lifespanCount'] = ctx.lifespan;
       }
