@@ -214,7 +214,7 @@ class Context {
         continue;
       }
 
-      const name = splited.get('contexts');
+      const name = splitted.get('contexts');
       contexts[name] = {
         name: name,
         rawName: context['name'],
