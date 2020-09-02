@@ -264,7 +264,6 @@ class Context {
         continue;
       }
       let v2Context = { name: ctx.rawName };
-      console.log(ctx);
       if (ctx.lifespan !== undefined) {
         v2Context['lifespanCount'] = ctx.lifespan;
       }
