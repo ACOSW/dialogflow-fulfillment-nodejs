@@ -79,11 +79,13 @@ class Context {
     if (!name || (typeof name !== 'string' && typeof name['name'] !== 'string')) {
       throw new Error('Required "name" argument must be a string or an object with a string attribute "name"');
     }
+
     if (typeof name !== 'string') {
       params = name['parameters'];
       lifespan = name['lifespan'];
       name = name['name'];
     }
+    
     if (!this.contexts[name]) {
       this.contexts[name] = {name: name};
     }
@@ -217,7 +219,6 @@ class Context {
       const name = splitted.get('contexts');
       contexts[name] = {
         name: name,
-        rawName: context['name'],
         lifespan: context["lifespanCount"],
         parameters: context["parameters"],
       };
@@ -249,6 +250,7 @@ class Context {
     }
     return v1OutputContexts;
   }
+
   /**
    * Get array of context objects formatted for v2 webhook response
    *
@@ -257,13 +259,12 @@ class Context {
   getV2OutputContextsArray() {
     let v2OutputContexts = [];
     for (const ctx of this) {
-      // Skip context if it is the same as the input context
       if (this.inputContexts &&
-        this.inputContexts[ctx.name] &&
         _.isEqual(ctx, this.inputContexts[ctx.name])) {
         continue;
       }
-      let v2Context = { name: ctx.rawName };
+
+      let v2Context = {name: `${this.session}/contexts/${ctx.name}`};
       if (ctx.lifespan !== undefined) {
         v2Context['lifespanCount'] = ctx.lifespan;
       }
