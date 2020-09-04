@@ -200,7 +200,6 @@ class Context {
     let contexts = {};
     for (let index = 0; index < v2InputContexts.length; index++) {
       let context = v2InputContexts[index];
-      console.log(context);
       const splitted = context["name"]
         .replace("agent/", "")
         .match(/([^\/]+\/[^\/]+)/g)
